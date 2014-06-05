@@ -26,7 +26,7 @@ if (!file.exists("data")) {dir.create("data")}
 if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
 
 #   check if data frame exist and reads the rds file from the zip file if not
-if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1))}
+if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1, exdir="./data"))}
 
 # select data from fips 24510 (aka Baltimore)
 

@@ -29,8 +29,8 @@ if (!file.exists("data")) {dir.create("data")}
 if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
 
 #   check if data frame exist and reads the rds file from the zip file if not
-if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1))}
-if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2))}
+if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1,exdir="./data"))}
+if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2,exdir="./data"))}
 
 # select observation from Baltimore City ... fips code 24510
 plot5raw <- subset(pm25, fips == "24510")
