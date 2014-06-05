@@ -13,14 +13,7 @@
 library(reshape2)
 
 # Read in data
-
-#########################
-#
-# uncomment this when completed. Data already loaded to same time.
-#
-#########################
-
-#pm25  <- readRDS("./data/summarySCC_PM25.rds")
+pm25  <- readRDS("./data/summarySCC_PM25.rds")
 
 # Melt the data frame
 plot1Melt <- melt(pm25, id="year", measure.vars="Emissions")
@@ -28,11 +21,13 @@ plot1Melt <- melt(pm25, id="year", measure.vars="Emissions")
 # Recast the data summing the emmissions by year
 plot1Data <- dcast(plot1Melt, year ~ variable,sum)
 
-######################
-#
-# and details to create PNG image
-#
-#########################
+#create a PNG
+plotfile = "./figures/plot1.png"
+size = 500
+png(filename = plotfile,
+    width = size,
+    height = size,
+    units = "px")
 
 # Create the plot
 plot(x = plot1Data$year, 
@@ -63,3 +58,5 @@ legend("bottomleft",
        col = c("red","blue"),
        legend = c("Reported total PM25 emissions",
                   "Trend line"))
+#turn off graphics device
+dev.off()

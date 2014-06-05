@@ -17,15 +17,8 @@ library(reshape2)
 library(ggplot2)
 
 # Read in data
-
-#########################
-#
-# uncomment this when completed. Data already loaded to same time.
-#
-#########################
-
-#pm25  <- readRDS("./data/summarySCC_PM25.rds")
-#SCC <- readRDS("./data/Source_Classification_Code.rds")
+pm25  <- readRDS("./data/summarySCC_PM25.rds")
+SCC <- readRDS("./data/Source_Classification_Code.rds")
 
 # select observation from Baltimore City ... fips code 24510
 plot6raw <- subset(pm25, (fips == "24510" | fips == "06037"))
@@ -53,11 +46,14 @@ plot6melt <- melt(plot6raw, id = c("year","fips"), measure.vars="Emissions")
 # Recast the data
 plot6cast <- dcast(plot6melt, year + fips ~ variable, sum)
 
-######################
-#
-# add details to create PNG image
-#
-#########################
+
+#create a PNG
+plotfile = "./figures/plot6a.png"
+size = 500
+png(filename = plotfile,
+    width = size,
+    height = size,
+    units = "px")
 
 plot6base <- ggplot(plot6cast, aes(year, Emissions))
 
@@ -67,8 +63,18 @@ plot6final <- plot6base +
     theme_bw()+
     facet_grid(.~fips)
 
-plot6final
+print(plot6final)
 
+dev.off()
+
+
+#create a PNG
+plotfile = "./figures/plot6b.png"
+size = 500
+png(filename = plotfile,
+    width = size,
+    height = size,
+    units = "px")
 
 plot(plot6cast$year, plot6cast$Emissions,
      xlab = "year",
@@ -81,11 +87,11 @@ points(subset(plot6cast, fips == "Los Angeles County")$year,
        subset(plot6cast, fips == "Los Angeles County")$Emissions,
        col = "blue")
 lines(subset(plot6cast, fips == "Baltimore City")$year,
-       subset(plot6cast, fips == "Baltimore City")$Emissions,
-       col = "red")
+      subset(plot6cast, fips == "Baltimore City")$Emissions,
+      col = "red")
 lines(subset(plot6cast, fips == "Los Angeles County")$year,
-       subset(plot6cast, fips == "Los Angeles County")$Emissions,
-       col = "blue")
+      subset(plot6cast, fips == "Los Angeles County")$Emissions,
+      col = "blue")
 
 LA <- subset(plot6cast, fips== "Los Angeles County")
 modelLA <- lm(Emissions ~ year, LA)
@@ -110,3 +116,6 @@ legend("right",
                   "Baltimore",
                   "Baltimore trend"),
        bty = "n")
+dev.off()
+
+

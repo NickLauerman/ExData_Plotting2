@@ -15,13 +15,7 @@ library(reshape2)
 
 # Read in data
 
-#########################
-#
-# uncomment this when completed. Data already loaded to same time.
-#
-#########################
-
-#pm25  <- readRDS("./data/summarySCC_PM25.rds")
+pm25  <- readRDS("./data/summarySCC_PM25.rds")
 
 # select data from fips 24510 (aka Baltimore)
 
@@ -33,12 +27,13 @@ plot2Melt <- melt(plot2raw, id="year", measure.vars="Emissions")
 # recast the melt
 plot2data <- dcast(plot2Melt, year ~ variable,sum)
 
-
-######################
-#
-# add details to create PNG image
-#
-#########################
+#create a PNG
+plotfile = "./figures/plot2.png"
+size = 500
+png(filename = plotfile,
+    width = size,
+    height = size,
+    units = "px")
 
 # Create the plot
 plot(x = plot2data$year, 
@@ -70,3 +65,4 @@ legend("bottomleft",
        col = c("red","blue"),
        legend = c("Reported total PM25 emissions",
                   "Trend line"))
+dev.off()

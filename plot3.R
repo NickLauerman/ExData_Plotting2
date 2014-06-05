@@ -17,13 +17,8 @@ library(ggplot2)
 
 # Read in data
 
-#########################
-#
-# uncomment this when completed. Data already loaded to same time.
-#
-#########################
 
-#pm25  <- readRDS("./data/summarySCC_PM25.rds")
+pm25  <- readRDS("./data/summarySCC_PM25.rds")
 
 # select data from fips 24510 (aka Baltimore)
 
@@ -40,6 +35,7 @@ plot3cast <- dcast(plot3melt, year + type ~ variable, sum)
 # set data for plot
 plot3base  <-  ggplot(plot3cast, aes(year,Emissions))
 
+#make the plot object
 plot3final<- plot3base  + 
     geom_point(color = "red") + 
     facet_grid(. ~ type) + 
@@ -47,10 +43,15 @@ plot3final<- plot3base  +
     theme_bw()
 
 
-######################
-#
-# add details to create PNG image
-#
-#########################
+#create a PNG
+plotfile = "./figures/plot3.png"
+
+png(filename = plotfile,
+    width = 1500,
+    height = 500,
+    units = "px")
+
 
 plot3final
+
+dev.off()

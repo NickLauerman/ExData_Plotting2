@@ -13,17 +13,9 @@
 # Setup
 library(reshape2)
 
-
 # Read in data
-
-#########################
-#
-# uncomment this when completed. Data already loaded to same time.
-#
-#########################
-
-#pm25  <- readRDS("./data/summarySCC_PM25.rds")
-#SCC <- readRDS("./data/Source_Classification_Code.rds")
+pm25  <- readRDS("./data/summarySCC_PM25.rds")
+SCC <- readRDS("./data/Source_Classification_Code.rds")
 
 # Extract the observation on Coal
 #find SCC's were the EI.Sector contain the word coal or Coal
@@ -39,13 +31,13 @@ plot4Melt <- melt(plot4raw, id="year", measure.vars="Emissions")
 # Cast the melted data
 plot4cast  <- dcast(plot4Melt, year ~ variable , sum)
 
-
-######################
-#
-# add details to create PNG image
-#
-#########################
-
+#create a PNG
+plotfile = "./figures/plot4.png"
+size = 500
+png(filename = plotfile,
+    width = size,
+    height = size,
+    units = "px")
 
 # Create the plot
 plot(x = plot4cast$year, 
@@ -53,7 +45,7 @@ plot(x = plot4cast$year,
      xlab = "Year",
      ylab = "Total PM25 Emissions (tons)",
      main = "Decreasing Total PM25 Emissions
-    for Coal",
+for Coal",
      col = "red",
      pch = 5)
 # Add a line
@@ -77,3 +69,4 @@ legend("bottomleft",
        col = c("red","blue"),
        legend = c("Reported total PM25 emissions",
                   "Trend line"))
+dev.off()
