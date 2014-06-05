@@ -17,8 +17,21 @@ library(reshape2)
 library(ggplot2)
 
 # Read in data
-pm25  <- readRDS("./data/summarySCC_PM25.rds")
-SCC <- readRDS("./data/Source_Classification_Code.rds")
+#   set variables
+url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
+zip = "./data/exdata-data-NEI_data.zip"
+file1 = "summarySCC_PM25.rds"
+file2 = "Source_Classification_Code.rds"
+
+#   check for data directory and for zip file
+#       make data directory if not present
+#       download data file if not present
+if (!file.exists("data")) {dir.create("data")}
+if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
+
+#   check if data frame exist and reads the rds file from the zip file if not
+if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1))}
+if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2))}
 
 # select observation from Baltimore City ... fips code 24510
 plot6raw <- subset(pm25, (fips == "24510" | fips == "06037"))
@@ -48,7 +61,7 @@ plot6cast <- dcast(plot6melt, year + fips ~ variable, sum)
 
 
 #create a PNG
-plotfile = "./figures/plot6a.png"
+plotfile = "./figures/plot6.png"
 size = 500
 png(filename = plotfile,
     width = size,
@@ -59,63 +72,11 @@ plot6base <- ggplot(plot6cast, aes(year, Emissions))
 
 plot6final <- plot6base +
     geom_point(color = "red") +
-    geom_smooth(method = "lm", se = T) +
+    geom_smooth(method = "glm", se = TRUE) +
     theme_bw()+
     facet_grid(.~fips)
 
 print(plot6final)
 
 dev.off()
-
-
-#create a PNG
-plotfile = "./figures/plot6b.png"
-size = 500
-png(filename = plotfile,
-    width = size,
-    height = size,
-    units = "px")
-
-plot(plot6cast$year, plot6cast$Emissions,
-     xlab = "year",
-     ylab = "Emissions (tons)",
-     type = "n")
-points(subset(plot6cast, fips == "Baltimore City")$year,
-       subset(plot6cast, fips == "Baltimore City")$Emissions,
-       col = "red")
-points(subset(plot6cast, fips == "Los Angeles County")$year,
-       subset(plot6cast, fips == "Los Angeles County")$Emissions,
-       col = "blue")
-lines(subset(plot6cast, fips == "Baltimore City")$year,
-      subset(plot6cast, fips == "Baltimore City")$Emissions,
-      col = "red")
-lines(subset(plot6cast, fips == "Los Angeles County")$year,
-      subset(plot6cast, fips == "Los Angeles County")$Emissions,
-      col = "blue")
-
-LA <- subset(plot6cast, fips== "Los Angeles County")
-modelLA <- lm(Emissions ~ year, LA)
-
-abline(modelLA, 
-       col = "blue",
-       lty = 2)
-
-Balt <- subset(plot6cast, fips== "Baltimore City")
-modelBalt <- lm(Emissions ~ year, Balt)
-
-abline(modelBalt, 
-       col = "red",
-       lty = 2)
-
-legend("right",
-       lty = c(1,2,1,2),
-       pch = c(1,NA,1,NA),
-       col = c("blue","blue","red","red"),
-       legend = c("Los Angeles County",
-                  "Los Angles trend",
-                  "Baltimore",
-                  "Baltimore trend"),
-       bty = "n")
-dev.off()
-
 

@@ -16,9 +16,19 @@ library(reshape2)
 library(ggplot2)
 
 # Read in data
+#   set variables
+url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
+zip = "./data/exdata-data-NEI_data.zip"
+file1 = "summarySCC_PM25.rds"
 
+#   check for data directory and for zip file
+#       make data directory if not present
+#       download data file if not present
+if (!file.exists("data")) {dir.create("data")}
+if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
 
-pm25  <- readRDS("./data/summarySCC_PM25.rds")
+#   check if data frame exist and reads the rds file from the zip file if not
+if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1))}
 
 # select data from fips 24510 (aka Baltimore)
 

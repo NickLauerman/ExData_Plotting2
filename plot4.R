@@ -14,8 +14,21 @@
 library(reshape2)
 
 # Read in data
-pm25  <- readRDS("./data/summarySCC_PM25.rds")
-SCC <- readRDS("./data/Source_Classification_Code.rds")
+#   set variables
+url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
+zip = "./data/exdata-data-NEI_data.zip"
+file1 = "summarySCC_PM25.rds"
+file2 = "Source_Classification_Code.rds"
+
+#   check for data directory and for zip file
+#       make data directory if not present
+#       download data file if not present
+if (!file.exists("data")) {dir.create("data")}
+if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
+
+#   check if data frame exist and reads the rds file from the zip file if not
+if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1))}
+if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2))}
 
 # Extract the observation on Coal
 #find SCC's were the EI.Sector contain the word coal or Coal

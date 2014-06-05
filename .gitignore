@@ -6,10 +6,13 @@
 
 # Rstudio project files
 .Rproj*
+*.Rproj
+
 
 # R data files from past sessions
 .Rdata
 
 # other files that arenot needed in the repo
 *.html
-
+junk*
+*.rds
