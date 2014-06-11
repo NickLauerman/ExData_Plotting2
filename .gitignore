@@ -5,8 +5,7 @@
 *-Ex.R
 
 # Rstudio project files
-.Rproj*
-*.Rproj
+*.Rproj*
 
 
 # R data files from past sessions
@@ -14,7 +13,7 @@
 
 # other files that arenot needed in the repo
 *.html
+*.rds
 junk*
 hold*
-*.rds
 todo*

@@ -37,11 +37,32 @@ if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2,exdir="./data"))}
 #   and Los Angeles County, California  ... fips code 06037
 plot6raw <- subset(pm25, (fips == "24510" | fips == "06037"))
 
-# find motor vehicle sources.
-#   choise to include all motor vehicles (including Planes, Marine Vessels,
+# find vehicle sources.
+#   choose to include all motor vehicles (including Planes, Marine Vessels,
 #   On and Off road, light and heavy duty).
 # EI.Section that starts with Mobile collects all SCC for this.
-ListSCC <- SCC$SCC[grep("^Mobile", SCC$EI.Sector )]
+#   EI.Section has higher level groupings however these groupings include some
+#   individual SCC that should not be included. Using the short names for the 
+#   individual SCC will allow the exclusion for these SCC. The format of the a
+#   hierarchical which will allow for excluding several SCC through a single term
+#
+# Using the Short.Name items that would have been included in the EI.Section 
+#   collection are dealt with.
+#
+#   First tire and break wear are excluded,
+#   then SCC for lawn and garden equipment (for example lawn mowers) are excluded,
+#   then SCC for agricultural equipment (for example sprayers) are excluded,
+#   then SCC for commercial equipment (for example generators) are excluded,
+#   then SCC for chain saws and shedders used in logging are excluded,
+#   finally SCC for equipment used in underground mining are are excluded.
+ListSCC <- SCC$SCC[((grepl("^Mobile", SCC$EI.Sector))
+                    & (!grepl("Wear$", SCC$Short.Name))
+                    & (!grepl("Lawn & Garden", SCC$Short.Name))
+                    & (!grepl("Agricultural Equipt", SCC$Short.Name))
+                    & (!grepl("Commercial Equip", SCC$Short.Name))
+                    & (!grepl("Logging Equipt /Chain Saws", SCC$Short.Name))
+                    & (!grepl("Logging Equipt /Shredders", SCC$Short.Name))
+                    & (!grepl("Underground Mining Equipt", SCC$Short.Name)))]
 
 # find which observation in pm25 have one of the above SCC codes
 listVehicles <- (plot6raw$SCC %in% ListSCC)
