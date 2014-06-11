@@ -34,6 +34,7 @@ if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1,exdir="./data"))}
 if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2,exdir="./data"))}
 
 # select observation from Baltimore City ... fips code 24510
+#   and Los Angeles County, California  ... fips code 06037
 plot6raw <- subset(pm25, (fips == "24510" | fips == "06037"))
 
 # find motor vehicle sources.
@@ -49,6 +50,8 @@ listVehicles <- (plot6raw$SCC %in% ListSCC)
 plot6raw <- plot6raw[listVehicles,]
 
 # convert fips codes to names them make them the fips variable a factor
+#  the convertion from a numeric to a character will help in the final graph by
+#  providing a human readable name to use in the plots.
 plot6raw$fips  <- sub("24510","Baltimore City", plot6raw$fips)
 plot6raw$fips  <- sub("06037","Los Angeles County", plot6raw$fips)
 plot6raw$fips <- as.factor(plot6raw$fips)
@@ -74,7 +77,11 @@ plot6final <- plot6base +
     geom_point(color = "red") +
     geom_smooth(method = "glm", se = TRUE) +
     theme_bw()+
-    facet_grid(.~fips)
+    facet_grid(.~fips) +
+    ggtitle("Comparison of PM 2.5 Emission for Vehicles
+            between Baltimore City & Los Angeles County") +
+    ylab("PM 2.5 Emission (tons)")
+    
 
 print(plot6final)
 

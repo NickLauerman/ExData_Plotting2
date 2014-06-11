@@ -50,18 +50,21 @@ plot3final<- plot3base  +
     geom_point(color = "red") + 
     facet_grid(. ~ type) + 
     geom_smooth(method = "lm", se = FALSE) + 
-    theme_bw()
+    theme_bw() +
+    ggtitle("Tends of PM 2.5 Emission by Emmision Type
+            for Baltimore City") +
+    ylab("PM 2.5 Emission (tons)")
 
 
 #create a PNG
 plotfile = "./figures/plot3.png"
 
 png(filename = plotfile,
-    width = 1500,
+    width = 2000,
     height = 500,
     units = "px")
 
 
-plot3final
+print(plot3final)
 
 dev.off()

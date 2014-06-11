@@ -56,22 +56,24 @@ png(filename = plotfile,
 plot(x = plot4cast$year, 
      y = plot4cast$Emissions,
      xlab = "Year",
-     ylab = "Total PM25 Emissions (tons)",
-     main = "Decreasing Total PM25 Emissions
+     ylab = "PM 2.5 Emissions (tons)",
+     main = "Decreasing Total PM 2.5 Emissions
 for Coal",
+     type = "b",
      col = "red",
-     pch = 5)
+     pch = 5,
+     lty = 1)
 # Add a line
-lines( x = plot4cast$year, 
-       y = plot4cast$Emissions,
-       lty = 1,
-       col = "red")
+#lines( x = plot4cast$year, 
+#       y = plot4cast$Emissions,
+#       lty = 1,
+#       col = "red")
 
 # simple linear regression to show trend
-plot1model <- lm(Emissions ~ year, data=plot4cast)
+plot4model <- lm(Emissions ~ year, data=plot4cast)
 
 # add the trend line
-abline(plot1model,
+abline(plot4model,
        lty = 2,
        col = "blue")
 
@@ -80,6 +82,6 @@ legend("bottomleft",
        pch = c(5, NA),
        lty = c(1,2),
        col = c("red","blue"),
-       legend = c("Reported total PM25 emissions",
+       legend = c("Reported total PM 2.5 emissions",
                   "Trend line"))
 dev.off()
