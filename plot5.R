@@ -14,24 +14,13 @@
 # Setup
 library(reshape2)
 
+# Data setup
+#   This is done in a seperate script "DataInput.R"
+source("DataInput.R")
 
-# Read in data
-#   set variables
-url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
-zip = "./data/exdata-data-NEI_data.zip"
-file1 = "summarySCC_PM25.rds"
-file2 = "Source_Classification_Code.rds"
 
-#   check for data directory and for zip file
-#       make data directory if not present
-#       download data file if not present
-if (!file.exists("data")) {dir.create("data")}
-if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
-
-#   check if data frame exist and reads the rds file from the zip file if not
-if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1,exdir="./data"))}
-if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2,exdir="./data"))}
-
+# Data selection and processing
+#
 # select observation from Baltimore City ... fips code 24510
 plot5raw <- subset(pm25, fips == "24510")
 
@@ -53,7 +42,6 @@ plot5raw <- subset(pm25, fips == "24510")
 #   then SCC for commercial equipment (for example generators) are excluded,
 #   then SCC for chain saws and shedders used in logging are excluded,
 #   finally SCC for equipment used in underground mining are are excluded.
-
 ListSCC <- SCC$SCC[((grepl("^Mobile", SCC$EI.Sector))
                     & (!grepl("Wear$", SCC$Short.Name))
                     & (!grepl("Lawn & Garden", SCC$Short.Name))
@@ -69,14 +57,22 @@ listVehicles <- (plot5raw$SCC %in% ListSCC)
 # Select the identified observation
 plot5raw <- plot5raw[listVehicles,]
 
+
+# Using the reshape2 the selected data is processed into a usable form
+#   The melt step selects specific elements from the data frame and creates a new
+#       data frame that is properly formated (tall) for the next step in the process
+#       recasting the data.
 # Melt the raw data
 plot5Melt <- melt(plot5raw, id="year", measure.vars="Emissions")
-
-# Cast the melted data
+#   The recast step takes the melted data and consolidates based on the specified
+#       id (year) using the specified function (sum) on the melted
+#       measurement variable (Emmissions)
+# Cast the melted data creating a data frame
 plot5cast  <- dcast(plot5Melt, year ~ variable , sum)
 
 
-#create a PNG
+# create the plot file
+#   create a PNG device
 plotfile = "./figures/plot5.png"
 size = 500
 png(filename = plotfile,
@@ -95,11 +91,6 @@ For Vehicles in Baltimore City",
      col = "red",
      pch = 5,
      lty = 1)
-# Add a line
-#lines( x = plot5cast$year, 
-#       y = plot5cast$Emissions,
-#       lty = 1,
-#       col = "red")
 
 # simple linear regression to show trend
 plot5model <- lm(Emissions ~ year, data=plot5cast)
@@ -116,4 +107,4 @@ legend("topright",
        col = c("red","blue"),
        legend = c("Reported total PM 2.5 emissions",
                   "Trend line"))
-dev.off()
+dev.off() #close the png graphics device

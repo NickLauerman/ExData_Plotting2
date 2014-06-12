@@ -16,23 +16,13 @@
 library(reshape2)
 library(ggplot2)
 
-# Read in data
-#   set variables
-url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
-zip = "./data/exdata-data-NEI_data.zip"
-file1 = "summarySCC_PM25.rds"
-file2 = "Source_Classification_Code.rds"
 
-#   check for data directory and for zip file
-#       make data directory if not present
-#       download data file if not present
-if (!file.exists("data")) {dir.create("data")}
-if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
+# Data setup
+#   This is done in a seperate script "DataInput.R"
+source("DataInput.R")
 
-#   check if data frame exist and reads the rds file from the zip file if not
-if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1,exdir="./data"))}
-if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2,exdir="./data"))}
-
+# Data selection and processing
+#
 # select observation from Baltimore City ... fips code 24510
 #   and Los Angeles County, California  ... fips code 06037
 plot6raw <- subset(pm25, (fips == "24510" | fips == "06037"))
@@ -77,14 +67,21 @@ plot6raw$fips  <- sub("24510","Baltimore City", plot6raw$fips)
 plot6raw$fips  <- sub("06037","Los Angeles County", plot6raw$fips)
 plot6raw$fips <- as.factor(plot6raw$fips)
 
+
+# Using the reshape2 the selected data is processed into a usable form
+#   The melt step selects specific elements from the data frame and creates a new
+#       data frame that is properly formated (tall) for the next step in the process
+#       recasting the data.
 # Melt the data
 plot6melt <- melt(plot6raw, id = c("year","fips"), measure.vars="Emissions")
-
-# Recast the data
+#   The recaste step takes the melted data and consolidates based on the specified
+#       id (year and fips) using the specified function (sum) on the melted
+#       measurement variable (Emmissions)
+# Recast the data creating a data frame
 plot6cast <- dcast(plot6melt, year + fips ~ variable, sum)
 
-
-#create a PNG
+# The plot file is produced
+#   create a PNG device
 plotfile = "./figures/plot6.png"
 size = 500
 png(filename = plotfile,
@@ -92,8 +89,11 @@ png(filename = plotfile,
     height = size,
     units = "px")
 
+# make the plot
+#   set data for plot
 plot6base <- ggplot(plot6cast, aes(year, Emissions))
 
+#   make the plot object
 plot6final <- plot6base +
     geom_point(color = "red") +
     geom_smooth(method = "glm", se = TRUE) +
@@ -103,8 +103,7 @@ plot6final <- plot6base +
             between Baltimore City & Los Angeles County") +
     ylab("PM 2.5 Emission (tons)")
     
+print(plot6final)   #print the chart tot he graphics device
 
-print(plot6final)
-
-dev.off()
+dev.off()           # close the PNG graphics device
 

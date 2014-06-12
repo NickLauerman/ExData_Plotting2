@@ -12,25 +12,22 @@
 # Setup
 library(reshape2)
 
-# Read in data
-#   set variables
-url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
-zip = "./data/exdata-data-NEI_data.zip"
-file1 = "summarySCC_PM25.rds"
+# Data setup
+#   This is done in a seperate script "DataInput.R"
+source("DataInput.R")
 
-#   check for data directory and for zip file
-#       make data directory if not present
-#       download data file if not present
-if (!file.exists("data")) {dir.create("data")}
-if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
-
-#   check if data frame exist and reads the rds file from the zip file if not
-if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1, exdir="./data"))}
-
-# Melt the data frame
+# Data selection and processing
+#
+# Using the reshape2 the selected data is processed into a usable form
+#   The melt step selects specific elements from the data frame and creates a new
+#       data frame that is properly formated (tall) for the next step in the process
+#       recasting the data.
+# Melt the raw data
 plot1Melt <- melt(pm25, id="year", measure.vars="Emissions")
-
-# Recast the data summing the emmissions by year
+#   The recast step takes the melted data and consolidates based on the specified
+#       id (year) using the specified function (sum) on the melted
+#       measurement variable (Emmissions)
+# Cast the melted data creating a data frame
 plot1Data <- dcast(plot1Melt, year ~ variable,sum)
 
 #create a PNG
@@ -51,11 +48,6 @@ plot(x = plot1Data$year,
      col = "red",
      pch = 5,
      lty = 1)
-# Add a line
-#lines( x = plot1Data$year, 
-#       y = plot1Data$Emissions,
-#       lty = 1,
-#       col = "red")
 
 # simple linear regression to show trend
 plot1model <- lm(Emissions ~ year, data=plot1Data)
@@ -72,5 +64,5 @@ legend("bottomleft",
        col = c("red","blue"),
        legend = c("Reported total PM 2.5 emissions",
                   "Trend line"))
-#turn off graphics device
-dev.off()
+
+dev.off()   #Close the PNG graphics device
