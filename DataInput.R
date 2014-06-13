@@ -16,6 +16,7 @@
 #       the format of this file is a zip file
 #   "file1" and "file2" are the file names for the files in the zip acrhaive
 #       both files are digital R data sets with the extension rds
+
 url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
 zip = "./data/exdata-data-NEI_data.zip"
 file1 = "summarySCC_PM25.rds"
