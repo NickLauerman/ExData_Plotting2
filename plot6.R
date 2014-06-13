@@ -15,11 +15,37 @@
 # Setup
 library(reshape2)
 library(ggplot2)
+library(gridExtra)
 
+# The part of the script checks for item and downloads, creates, extracts or 
+#   creates the data frame if it is not present. The check will save processing 
+#   time for actions that may already have been created.
+#
+# 
+# Set variables:
+#   "url" is the internet locaction and names of the zip file that is supplied 
+#       for the course
+#   "zip" is the subdirectory and filename that was downloaded fo the assignement
+#       the format of this file is a zip file
+#   "file1" and "file2" are the file names for the files in the zip acrhaive
+#       both files are digital R data sets with the extension rds
+url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
+zip = "./data/exdata-data-NEI_data.zip"
+file1 = "summarySCC_PM25.rds"
+file2 = "Source_Classification_Code.rds"
 
-# Data setup
-#   This is done in a seperate script "DataInput.R"
-source("DataInput.R")
+# Create data structure and download source file
+#   check for that the "data" subdirectory and that the zip file is present
+#       make data subdirectory if it is not present
+#       download the data file if it is not present
+if (!file.exists("data")) {dir.create("data")}
+if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
+
+# Create data frames if needed.
+#   check if data frame exist and reads the rds file from the zip file if not
+if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1,exdir="./data"))}
+if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2,exdir="./data"))}
+
 
 # Data selection and processing
 #
@@ -80,30 +106,65 @@ plot6melt <- melt(plot6raw, id = c("year","fips"), measure.vars="Emissions")
 # Recast the data creating a data frame
 plot6cast <- dcast(plot6melt, year + fips ~ variable, sum)
 
-# The plot file is produced
-#   create a PNG device
-plotfile = "./figures/plot6.png"
-size = 500
-png(filename = plotfile,
-    width = size,
-    height = size,
-    units = "px")
+# Add another column to the data from that containes the same values as
+#   to normalize
+plot6cast <- cbind(plot6cast,plot6cast$Emissions)
+names(plot6cast)[4] <- "Emissions.Norm"
+# normalize the Emission values so by deviding by the first year for each city
+#   this should help sow the relative change in each city
+city  <- "Baltimore City"
 
-# make the plot
+plot6cast$Emissions.Norm[plot6cast$fips == city] <- 
+    plot6cast$Emissions.Norm[(plot6cast$fips == city)] /
+    plot6cast$Emissions.Norm[((plot6cast$year == min(plot6cast$year[plot6cast$fips == city ])) 
+                              & (plot6cast$fips == city))]
+
+city  <- "Los Angeles County"
+plot6cast$Emissions.Norm[plot6cast$fips == city] <- 
+    plot6cast$Emissions.Norm[(plot6cast$fips == city)] /
+    plot6cast$Emissions.Norm[((plot6cast$year == min(plot6cast$year[plot6cast$fips == city ])) 
+                              & (plot6cast$fips == city))]
+# The plot file is produced
+
+
+# make the plot of gross emissions
 #   set data for plot
 plot6base <- ggplot(plot6cast, aes(year, Emissions))
 
 #   make the plot object
-plot6final <- plot6base +
+plot6gross <- plot6base +
     geom_point(color = "red") +
     geom_smooth(method = "glm", se = TRUE) +
     theme_bw()+
     facet_grid(.~fips) +
-    ggtitle("Comparison of PM 2.5 Emission for Vehicles
-            between Baltimore City & Los Angeles County") +
+    ggtitle("Total Emissions for Vehicles") +
     ylab("PM 2.5 Emission (tons)")
+# make the plot of normilized emissions
+#   set data for plot
+plot6baseNorm <- ggplot(plot6cast, aes(year, Emissions.Norm))
+
+#   make the plot object
+plot6norm <- plot6baseNorm +
+    geom_point(color = "red") +
+    geom_smooth(method = "glm", se = TRUE) +
+    theme_bw()+
+    facet_grid(.~fips) +
+    ggtitle("Emissions for Vehicles normalized to 1999 levels") +
+    ylab("PM 2.5 Emission Normalized to 1999")
+
+#   create a PNG device
+plotfile = "./figures/plot6.png"
+size = 600
+png(filename = plotfile,
+    width = size,
+    height = size,
+    units = "px")
     
-print(plot6final)   #print the chart tot he graphics device
+print(grid.arrange(plot6gross, 
+                   plot6norm, 
+                   ncol=1, 
+                   main = "Comparison of PM 2.5 Emission for Vehicles
+            between Baltimore City & Los Angeles County"))
 
 dev.off()           # close the PNG graphics device
 

@@ -4,9 +4,9 @@
 # R script to check read 2 rds type files for the second class project for
 #   the Exploratory Data Analysis class.
 #
-# The script check for item and downloads, creats, extracts or creates the data
-#   frame if it is not present. The check will save processing time for actions
-#   that may already have been created.
+# The part of the script checks for item and downloads, creates, extracts or 
+#   creates the data frame if it is not present. The check will save processing 
+#   time for actions that may already have been created.
 #
 # 
 # Set variables:
