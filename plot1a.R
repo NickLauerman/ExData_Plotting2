@@ -65,12 +65,12 @@ plot1Data <- dcast(plot1Melt, year ~ variable,sum)
 
 #create a PNG
 
-plotfile = "./figures/plot1.png"
+plotfile = "./figures/plot1a.png"
 size = 600
-png(filename = plotfile,
-    width = size,
-    height = size,
-    units = "px")
+#png(filename = plotfile,
+#    width = size,
+ #   height = size,
+  #  units = "px")
 
 # Create the plot
 
@@ -79,7 +79,7 @@ plot(x = plot1Data$year,
      xlab = "Year",
      ylab = "Total PM 2.5 Emissions (tons)",
      main = "Decreasing Total PM 2.5 Emissions",
-     type = "b",
+     type = "p",
      col = "red",
      pch = 5,
      lty = 1)
@@ -89,13 +89,13 @@ plot1model <- lm(Emissions ~ year, data=plot1Data)
 
 # add the trend line
 abline(plot1model,
-       lty = 2,
+       lty = 1,
        col = "blue")
 
 # add a legend
 legend("bottomleft",
        pch = c(5, NA),
-       lty = c(1,2),
+       lty = c(NA,2),
        col = c("red","blue"),
        legend = c("Reported total PM 2.5 emissions",
                   "Trend line"))

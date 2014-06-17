@@ -13,7 +13,9 @@
 # Setup
 library(reshape2)
 
-# Data setup
+# Data setup  --    This section would nrmally be a seperate script or function
+#                   so that it could be called and not risk a cut and paste error.
+#
 # The part of the script checks for item and downloads, creates, extracts or 
 #   creates the data frame if it is not present. The check will save processing 
 #   time for actions that may already have been created.
@@ -26,6 +28,7 @@ library(reshape2)
 #       the format of this file is a zip file
 #   "file1" and "file2" are the file names for the files in the zip acrhaive
 #       both files are digital R data sets with the extension rds
+
 url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
 zip = "./data/exdata-data-NEI_data.zip"
 file1 = "summarySCC_PM25.rds"
@@ -35,19 +38,20 @@ file2 = "Source_Classification_Code.rds"
 #   check for that the "data" subdirectory and that the zip file is present
 #       make data subdirectory if it is not present
 #       download the data file if it is not present
+
 if (!file.exists("data")) {dir.create("data")}
 if (!file.exists(zip)) {download.file(url = url, destfile = zip)}
 
 # Create data frames if needed.
 #   check if data frame exist and reads the rds file from the zip file if not
+
 if(!exists("pm25")) {pm25  <- readRDS(unzip(zip,file1,exdir="./data"))}
 if (!exists("SCC")) {SCC <- readRDS(unzip(zip,file2,exdir="./data"))}
-
-
 
 # Data selection and processing
 #
 # select data from fips 24510 (aka Baltimore)
+
 plot2raw <- subset(pm25, fips == "24510")
 
 # Using the reshape2 the selected data is processed into a usable form
@@ -55,16 +59,19 @@ plot2raw <- subset(pm25, fips == "24510")
 #       data frame that is properly formated (tall) for the next step in the process
 #       recasting the data.
 # Melt the raw data
+
 plot2Melt <- melt(plot2raw, id="year", measure.vars="Emissions")
+
 #   The recast step takes the melted data and consolidates based on the specified
 #       id (year) using the specified function (sum) on the melted
 #       measurement variable (Emmissions)
 # Cast the melted data creating a data frame
-plot2data <- dcast(plot2Melt, year ~ variable,sum)
 
+plot2data <- dcast(plot2Melt, year ~ variable,sum)
 
 # create the plot file
 #   create a PNG device
+
 plotfile = "./figures/plot2.png"
 size = 600
 png(filename = plotfile,
@@ -99,4 +106,5 @@ legend("bottomleft",
        col = c("red","blue"),
        legend = c("Reported total PM 2.5 emissions",
                   "Trend line"))
+
 dev.off()   #Close the PNG graphics device
