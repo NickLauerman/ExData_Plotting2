@@ -92,9 +92,8 @@ png(filename = plotfile,
 plot(x = plot4cast$year, 
      y = plot4cast$Emissions,
      xlab = "Year",
-     ylab = "PM 2.5 Emissions (tons)",
-     main = "Decreasing Total PM 2.5 Emissions
-for Coal",
+     ylab = expression(paste(PM[~2.5], " Emissions (tons)")),
+     main = expression(paste("Decreasing Total ", PM[~2.5], " Emissions for Coal")),
      type = "b",
      col = "red",
      pch = 5,
@@ -113,7 +112,9 @@ legend("bottomleft",
        pch = c(5, NA),
        lty = c(1,2),
        col = c("red","blue"),
-       legend = c("Reported total PM 2.5 emissions",
-                  "Trend line"))
+       legend = c(expression(paste("Reported total ",PM[~2.5], " emissions")),
+                  "Trend line"),
+       bty = "n",
+       cex = 0.8)
 
 dev.off() # close the PNG graphics device

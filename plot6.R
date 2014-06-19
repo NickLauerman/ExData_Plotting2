@@ -151,8 +151,8 @@ plot6gross <- plot6base +
     geom_smooth(method = "glm", se = TRUE) +
     theme_bw()+
     facet_grid(.~fips) +
-    ggtitle("Total Emissions for Vehicles") +
-    ylab("PM 2.5 Emission (tons)")
+    ggtitle("Total Emissions For Vehicles") +
+    ylab(expression(paste(PM[~2.5]," Emission (tons)")))
 
 # make the plot of normilized emissions
 #   set data for plot
@@ -165,8 +165,8 @@ plot6norm <- plot6baseNorm +
     geom_smooth(method = "glm", se = TRUE) +
     theme_bw()+
     facet_grid(.~fips) +
-    ggtitle("Emissions for Vehicles normalized to 1999 levels") +
-    ylab("PM 2.5 Emission Normalized to 1999")
+    ggtitle("Emissions For Vehicles Normalized To 1999 Levels") +
+    ylab(expression(paste(PM[~2.5], " Emission Normalized To 1999")))
 
 #   create a PNG device
 plotfile = "./figures/plot6.png"
@@ -179,7 +179,7 @@ png(filename = plotfile,
 print(grid.arrange(plot6gross, 
                    plot6norm, 
                    ncol=1, 
-                   main = "Comparison of PM 2.5 Emission for Vehicles
-            between Baltimore City & Los Angeles County"))
+                   main = "Comparison of PM 2.5 Emission For Vehicles Between 
+Baltimore City & Los Angeles County"))
 
 dev.off()           # close the PNG graphics device

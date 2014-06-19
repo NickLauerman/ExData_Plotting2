@@ -83,9 +83,10 @@ plot3final<- plot3base  +
     facet_grid(. ~ type) + 
     geom_smooth(method = "lm", se = FALSE) + 
     theme_bw() +
-    ggtitle("Tends of PM 2.5 Emission by Emmision Type
-            for Baltimore City") +
-    ylab("PM 2.5 Emission (tons)")
+    ggtitle(expression(paste("Tends of ",
+                             PM[~2.5],
+                             " Emission by Emision Type for Baltimore City"))) +
+    ylab(expression(paste(PM[~2.5]," Emission (tons)")))
 
 #create a PNG device
 plotfile = "./figures/plot3.png"
