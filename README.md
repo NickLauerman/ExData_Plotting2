@@ -36,10 +36,11 @@ script | question answered|plot file(s) produced
 `plot3.R` | Of the four types of sources indicated by the type (point, nonpoint, onroad, nonroad) variable, which of these four sources have seen decreases in emissions from 1999–2008 for **Baltimore City**? Which have seen increases in emissions from 1999–2008?|plot3.png
 `plot4.R` | Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?|plot4.png
 `plot5.R` | How have emissions from motor vehicle sources changed from 1999–2008 in **Baltimore City**?|plot5.png
-`plot6.R` | Compare emissions from motor vehicle sources in **Baltimore City** with emissions from motor vehicle sources in **Los Angeles County**, California (fips == "06037"). Which city has seen greater changes over time in motor vehicle emissions?|plot6a.png plot6b.png
+`plot6.R` | Compare emissions from motor vehicle sources in **Baltimore City** with emissions from motor vehicle sources in **Los Angeles County**, California (fips == "06037"). Which city has seen greater changes over time in motor vehicle emissions?|plot6a.png
+
 
 Plots 1 and 2 are to be completed with **base** plotting in R.
-Plot 4 is to be compted with the **ggplot2** package.
+Plot 3 is to be compted with the **ggplot2** package.
 
 
 
